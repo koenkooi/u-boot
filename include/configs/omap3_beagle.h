@@ -131,6 +131,7 @@
 #define CONFIG_SYS_USB_EHCI_MAX_ROOT_PORTS 3
 #define CONFIG_USB_HOST_ETHER
 #define CONFIG_USB_ETHER_SMSC95XX
+#define CONFIG_USB_ETHER_ASIX
 
 #define CONFIG_NET_MULTI
 
@@ -156,7 +157,7 @@
 #define CONFIG_CMD_NET      /* bootp, tftpboot, rarpboot    */
 #define CONFIG_CMD_NFS      /* NFS support          */
 #define CONFIG_CMD_PING
-
+#define CONFIG_CMD_DHCP
 
 #undef CONFIG_CMD_FLASH		/* flinfo, erase, protect	*/
 #undef CONFIG_CMD_FPGA		/* FPGA configuration Support	*/
