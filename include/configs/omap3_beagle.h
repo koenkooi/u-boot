@@ -207,6 +207,8 @@
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"loadaddr=0x82000000\0" \
 	"usbtty=cdc_acm\0" \
+	"usbethaddr=de:ad:be:ef\0" \
+	"bootfile=uImage.beagle\0" \
 	"console=ttyO2,115200n8\0" \
 	"mpurate=auto\0" \
 	"buddy=none "\
