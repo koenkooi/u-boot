@@ -53,6 +53,11 @@
 #define PM_CTRL				0x20
 #define PM_CTL_PHY_RST_			0x00000010
 
+#define LED_GPIO_CFG			0x24
+#define LED_GPIO_CFG_SPD_LED		0x01000000
+#define LED_GPIO_CFG_LNK_LED		0x00100000
+#define LED_GPIO_CFG_FDX_LED		0x00010000
+
 #define AFC_CFG				0x2C
 
 /*
@@ -595,6 +600,13 @@ static int smsc95xx_init(struct eth_device *eth, bd_t *bd)
 		return ret;
 	debug("ID_REV = 0x%08x\n", read_buf);
 
+	/* Configure GPIO pins as LED outputs */
+	write_buf = LED_GPIO_CFG_SPD_LED | LED_GPIO_CFG_LNK_LED |
+		LED_GPIO_CFG_FDX_LED;
+	ret = smsc95xx_write_reg(dev, LED_GPIO_CFG, write_buf);
+	if (ret < 0)
+		return ret;
+
 	/* Init Tx */
 	write_buf = 0;
 	ret = smsc95xx_write_reg(dev, FLOW, write_buf);
@@ -768,7 +780,12 @@ static int smsc95xx_recv(struct eth_device *eth)
 
 static void smsc95xx_halt(struct eth_device *eth)
 {
+	struct ueth_data *dev = (struct ueth_data *)eth->priv;
+
 	debug("** %s()\n", __func__);
+
+	/* Disable GPIO pins as LED outputs */
+	smsc95xx_write_reg(dev, LED_GPIO_CFG, 0);
 }
 
 /*
