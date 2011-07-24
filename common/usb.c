@@ -134,6 +134,10 @@ int usb_stop(void)
 	int res = 0;
 
 	if (usb_started) {
+#ifdef CONFIG_USB_HOST_ETHER
+		// deregister ethernet devices from the system
+		usb_host_eth_deregister();
+#endif
 		asynch_allowed = 1;
 		usb_started = 0;
 		usb_hub_reset();

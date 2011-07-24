@@ -239,6 +239,31 @@ int eth_register(struct eth_device *dev)
 	return 0;
 }
 
+void eth_deregister(struct eth_device *dev)
+{
+	struct eth_device *d = eth_devices;
+
+	if (!dev || !d) return;
+
+	do
+	{
+		// removed from linked list and update current and head pointers
+		if (d->next == dev) {
+			d->next = d->next->next;
+
+			if (eth_current == dev) {
+				eth_current = (dev->next != dev) ? dev->next : NULL;
+				eth_current_changed();
+			}
+			if (eth_devices == dev) {
+				eth_devices = (dev->next != dev) ? dev->next : NULL;
+			}
+			break;
+		}
+
+	} while (d=d->next);
+}
+
 int eth_initialize(bd_t *bis)
 {
 	int eth_number = 0;
