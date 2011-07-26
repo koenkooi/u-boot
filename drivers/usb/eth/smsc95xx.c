@@ -142,6 +142,9 @@
 #define USB_BULK_SEND_TIMEOUT 5000
 #define USB_BULK_RECV_TIMEOUT 5000
 
+/* Extra sleep for initlization, 450ms barely works, 500ms should be safe */
+#define SMSC95XX_POST_INIT_WAIT 500
+
 #define AX_RX_URB_SIZE 2048
 #define PHY_CONNECT_TIMEOUT 5000
 
@@ -670,6 +673,11 @@ static int smsc95xx_init(struct eth_device *eth, bd_t *bd)
 		printf("unable to connect.\n");
 		return -1;
 	}
+
+	printf("Giving the interface time to get ready...");
+	udelay(SMSC95XX_POST_INIT_WAIT * 1000);
+	printf(" done.\n");
+
 	return 0;
 }
 
