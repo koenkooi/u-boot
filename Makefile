@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2000-2010
+# (C) Copyright 2000-2011
 # Wolfgang Denk, DENX Software Engineering, wd@denx.de.
 #
 # See file CREDITS for list of people who contributed to this
@@ -24,7 +24,7 @@
 VERSION = 2011
 PATCHLEVEL = 06
 SUBLEVEL =
-EXTRAVERSION = -rc3
+EXTRAVERSION =
 ifneq "$(SUBLEVEL)" ""
 U_BOOT_VERSION = $(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)
 else
@@ -266,7 +266,7 @@ endif
 LIBS += drivers/rtc/librtc.o
 LIBS += drivers/serial/libserial.o
 LIBS += drivers/twserial/libtws.o
-LIBS += drivers/usb/eth/libusb_eth.a
+LIBS += drivers/usb/eth/libusb_eth.o
 LIBS += drivers/usb/gadget/libusb_gadget.o
 LIBS += drivers/usb/host/libusb_host.o
 LIBS += drivers/usb/musb/libusb_musb.o
