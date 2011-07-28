@@ -91,8 +91,8 @@ static void probe_valid_drivers(struct usb_device *dev)
 		 */
 		eth = &usb_eth[usb_max_eth_dev].eth_dev;
 		if (prob_dev[j].get_info(dev,
-			&usb_eth[usb_max_eth_dev],
-			eth)) {
+					&usb_eth[usb_max_eth_dev],
+					eth)) {
 			/* found proper driver */
 			/* register with networking stack */
 			usb_max_eth_dev++;
@@ -104,12 +104,12 @@ static void probe_valid_drivers(struct usb_device *dev)
 			 */
 			eth_register(eth);
 			if (eth_write_hwaddr(eth, "usbeth",
-					usb_max_eth_dev - 1))
+						usb_max_eth_dev - 1))
 				puts("Warning: failed to set MAC address\n");
 			break;
-			}
 		}
 	}
+}
 
 /*******************************************************************************
  * scan the usb and reports device info
@@ -158,4 +158,20 @@ int usb_host_eth_scan(int mode)
 	if (usb_max_eth_dev > 0)
 		return 0;
 	return -1;
+}
+
+/*******************************************************************************
+ * remove usb devices for eth subsystem when usb is stopped
+ */
+void usb_host_eth_deregister()
+{
+	int i;
+
+	for (i = 0; i < USB_MAX_ETH_DEV; i++)
+	{
+		if (usb_eth[i].eth_dev.next)
+		{
+			eth_deregister(&usb_eth[i].eth_dev);
+		}
+	}
 }

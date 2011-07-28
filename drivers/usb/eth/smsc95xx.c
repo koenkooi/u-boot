@@ -53,6 +53,11 @@
 #define PM_CTRL				0x20
 #define PM_CTL_PHY_RST_			0x00000010
 
+#define LED_GPIO_CFG			0x24
+#define LED_GPIO_CFG_SPD_LED		0x01000000
+#define LED_GPIO_CFG_LNK_LED		0x00100000
+#define LED_GPIO_CFG_FDX_LED		0x00010000
+
 #define AFC_CFG				0x2C
 
 /*
@@ -136,6 +141,9 @@
 #define USB_CTRL_GET_TIMEOUT 5000
 #define USB_BULK_SEND_TIMEOUT 5000
 #define USB_BULK_RECV_TIMEOUT 5000
+
+/* Extra sleep for initlization, 450ms barely works, 600ms should be safe */
+#define SMSC95XX_POST_INIT_WAIT 600
 
 #define AX_RX_URB_SIZE 2048
 #define PHY_CONNECT_TIMEOUT 5000
@@ -595,6 +603,13 @@ static int smsc95xx_init(struct eth_device *eth, bd_t *bd)
 		return ret;
 	debug("ID_REV = 0x%08x\n", read_buf);
 
+	/* Configure GPIO pins as LED outputs */
+	write_buf = LED_GPIO_CFG_SPD_LED | LED_GPIO_CFG_LNK_LED |
+		LED_GPIO_CFG_FDX_LED;
+	ret = smsc95xx_write_reg(dev, LED_GPIO_CFG, write_buf);
+	if (ret < 0)
+		return ret;
+
 	/* Init Tx */
 	write_buf = 0;
 	ret = smsc95xx_write_reg(dev, FLOW, write_buf);
@@ -652,12 +667,16 @@ static int smsc95xx_init(struct eth_device *eth, bd_t *bd)
 		}
 	} while (!link_detected && timeout < PHY_CONNECT_TIMEOUT);
 	if (link_detected) {
+		/* Wait for the interface to finish initialization */
+		udelay(SMSC95XX_POST_INIT_WAIT * 1000);
+
 		if (timeout != 0)
 			printf("done.\n");
 	} else {
 		printf("unable to connect.\n");
 		return -1;
 	}
+
 	return 0;
 }
 
@@ -768,7 +787,12 @@ static int smsc95xx_recv(struct eth_device *eth)
 
 static void smsc95xx_halt(struct eth_device *eth)
 {
+	struct ueth_data *dev = (struct ueth_data *)eth->priv;
+
 	debug("** %s()\n", __func__);
+
+	/* Disable GPIO pins as LED outputs */
+	smsc95xx_write_reg(dev, LED_GPIO_CFG, 0);
 }
 
 /*

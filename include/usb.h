@@ -172,6 +172,7 @@ int usb_stor_info(void);
 
 #define USB_MAX_ETH_DEV 5
 int usb_host_eth_scan(int mode);
+void usb_host_eth_deregister(void);
 
 #endif
 
