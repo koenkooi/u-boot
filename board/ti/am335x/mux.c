@@ -381,6 +381,13 @@ void enable_board_pin_mux(void)
 		configure_module_pin_mux(mmc0_pin_mux_sk_evm);
 	} else if (board_is_bone_lt()) {
 		/* Beaglebone LT pinmux */
+		if(board_is_bben()) {
+			/* SanCloud Beaglebone LT Enhanced pinmux */
+			configure_module_pin_mux(rgmii1_pin_mux);
+		} else {
+			/* Beaglebone LT pinmux */
+			configure_module_pin_mux(mii1_pin_mux);
+		}
 		configure_module_pin_mux(mii1_pin_mux);
 		configure_module_pin_mux(mmc0_pin_mux);
 #if defined(CONFIG_NAND) && defined(CONFIG_EMMC_BOOT)
